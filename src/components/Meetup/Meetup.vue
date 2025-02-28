@@ -10,8 +10,8 @@
               :src="meetup.imageUrl"
               height="400px"
           ></v-img>
-          <v-card-subtitle>{{meetup.date}}- Where it takes place</v-card-subtitle>
-          <v-card-text>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cupiditate velit dolorum facere totam, dignissimos quas, expedita, eveniet impedit nihil odit aperiam culpa libero! Quis, fugit sapiente nam doloribus dolore saepe.
+          <v-card-subtitle>{{$filters.dateFormat(meetup.date)}} - {{meetup.location}}</v-card-subtitle>
+          <v-card-text>{{meetup.description}}
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>

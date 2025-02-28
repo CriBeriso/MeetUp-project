@@ -13,7 +13,7 @@
             </v-col>
             <v-col cols="7" sm="8" md="9">
               <v-card-title class="white--text">{{meetup.title}}</v-card-title>
-              <v-card-subtitle>{{meetup.date}}</v-card-subtitle>
+              <v-card-subtitle>{{$filters.dateFormat(meetup.date) }}</v-card-subtitle>
               <v-card-actions>
                 <v-btn variant="flat" color="secondary" :to="'/meetups/' + meetup.id">
                   <v-icon start>mdi-arrow-right-circle</v-icon>
