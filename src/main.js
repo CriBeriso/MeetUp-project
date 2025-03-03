@@ -9,6 +9,7 @@ import { createApp } from 'vue'
 import store from './store'
 import router from './router'
 import App from './App.vue'
+import AlertCmp from '@/components/Shared/Alert.vue'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -27,7 +28,7 @@ if (!firebaseConfig.apiKey) {
 
 const app = createApp(App)
 
-app.use(router).use(store)
+app.use(router).use(store).use('app-alert', AlertCmp)
 
 registerPlugins(app)
 

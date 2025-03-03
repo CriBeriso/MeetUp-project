@@ -20,11 +20,10 @@ const store = createStore({
         location: 'Paris',
         description: 'It\'s Paris!'
       }
-    ]
-    // user: {
-    //   id: 'abcd',
-    //   registeredMeetups: ['PR1']
-    // }
+    ],
+    user: null,
+    loading: false,
+    error: null
   },
   mutations: {
     createMeetup (state, payload) {
@@ -32,6 +31,15 @@ const store = createStore({
     },
     setUser (state, payload) {
       state.user = payload
+    },
+    setLoading(state, payload) {
+      state.loading = payload
+    },
+    setError(state, payload) {
+      state.error = payload
+    },
+    clearError (state) {
+      state.error = null
     }
   },
   actions: {
@@ -44,13 +52,15 @@ const store = createStore({
         date: payload.date,
         id: 'abcdefg'
       }
-      // Reach out to firebase and store it
       commit('createMeetup', meetup)
     },
     signUserUp ({commit}, payload) {
+      commit('setLoading', true)
+      commit('clearError')
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, payload.email, payload.password)
         .then((userCredential) => {
+          commit('setLoading', false)
           const user = userCredential.user;
           const newUser = {
             id: user.uid,
@@ -60,14 +70,19 @@ const store = createStore({
         })
         .catch(
           error => {
+            commit('setLoading', false)
+            commit('setError', error)
             console.log(error)
           }
         )
     },
     signUserIn ({commit}, payload) {
+      commit('setLoading', true)
+      commit('clearError')
       const auth = getAuth();
       signInWithEmailAndPassword(auth, payload.email, payload.password)
       .then((userCredential) => {
+        commit('setLoading', false)
         const user = userCredential.user;
         const newUser = {
           id: user.uid,
@@ -77,9 +92,14 @@ const store = createStore({
       })
       .catch(
         error => {
+          commit('setLoading', false)
+          commit('setError', error)
           console.log(error)
         }
       )
+    },
+    clearError ({commit}) {
+      commit('clearError')
     }
   },
   getters: {
@@ -100,6 +120,12 @@ const store = createStore({
     },
     user (state) {
       return state.user
+    },
+    loading (state) {
+      return state.loading
+    },
+    error (state) {
+      return state.error
     }
   }
 });
