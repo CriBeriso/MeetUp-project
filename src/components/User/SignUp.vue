@@ -5,7 +5,7 @@
         <v-card>
           <v-card-text>
             <v-container>
-              <form>
+              <form @submit.prevent="onSignUp">
                 <v-row>
                   <v-col cols="12">
                     <v-text-field
@@ -73,7 +73,7 @@ export default {
   methods: {
     onSignUp () {
       // vuex
-      console.log({email: this.email, password: this.password, confirmPassword: this.confirmPassword})
+      this.$store.dispatch('signUserUp', {email: this.email, password: this.password})
     }
   }
 }

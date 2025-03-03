@@ -4,32 +4,30 @@
  */
 // Plugins
 import { registerPlugins } from '@/plugins'
+import { initializeApp } from "firebase/app"
+import { createApp } from 'vue'
 import store from './store'
 import router from './router'
 import App from './App.vue'
-import { createApp } from 'vue'
-import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBgC8C2GhirAGpjrP4nqssyXqlpwlD9Hw8',
-  authDomain: 'meetupproject-5e537.firebaseapp.com',
-  projectId: 'meetupproject-5e537',
-  storageBucket: 'meetupproject-5e537.firebasestorage.app',
-  messagingSenderId: '823958977209',
-  appId: '1:823958977209:web:8f0b08ca587d4d5e0c3968'
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
-const firebase = initializeApp(firebaseConfig);
-const app = createApp(App)
-app.config.globalProperties.$filters = {
-  dateFormat (value) {
-    const date = new Date(value)
-    return date.toLocaleString(['es-ES'], {month: 'short',  day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})
-  }
+
+if (!firebaseConfig.apiKey) {
+  console.error("⚠️ Error: Firebase API Key no encontrada. Verifica tu archivo .env");
+} else {
+  initializeApp(firebaseConfig);
 }
 
+const app = createApp(App)
 
-app.use(router)
-app.use(store)
+app.use(router).use(store)
 
 registerPlugins(app)
 

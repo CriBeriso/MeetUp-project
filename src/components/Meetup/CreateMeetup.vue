@@ -102,18 +102,18 @@ export default {
       && this.description !== ''
     },
     submittableDateTime () {
+      console.log(this.time)
+      console.log(this.date)
       if (typeof this.time === 'string') {
         const hours = this.time.match(/^(\d+)/)[1]
         const minutes = this.time.match(/:(\d+)/)[1]
-        date.setHours(hours)
-        date.setMinutes(minutes)
+        this.date.setHours(hours)
+        this.date.setMinutes(minutes)
       } else {
         this.date.setHours(this.time.getHours())
         this.date.setMinutes(this.time.getMinutes())
       }
-      const date = this.date.toDateString()
-      console.log(date)
-      return date
+      return this.date
     }
   },
   methods: {
@@ -127,7 +127,7 @@ export default {
         imageUrl: this.imageUrl,
         description: this.description,
         date: this.submittableDateTime,
-        // time: this.time
+        time: this.time
       }
       this.$store.dispatch('createMeetup', meetupData)
       this.$router.push('/meetups')

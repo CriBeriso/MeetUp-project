@@ -1,4 +1,5 @@
 import {createStore} from 'vuex'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 const store = createStore({
   state: {
@@ -28,6 +29,9 @@ const store = createStore({
   mutations: {
     createMeetup (state, payload) {
       state.loadedMeetups.push(payload)
+    },
+    setUser (state, payload) {
+      state.user = payload
     }
   },
   actions: {
@@ -42,7 +46,24 @@ const store = createStore({
       }
       // Reach out to firebase and store it
       commit('createMeetup', meetup)
-    }
+    },
+    signUserUp ({commit}, payload) {
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, payload.email, payload.password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          const newUser = {
+            id: user.uid,
+            registeredMeetups: [],
+          };
+            commit('setUser', newUser)
+        })
+        .catch(
+          error => {
+            console.log(error)
+          }
+        )
+    } 
   },
   getters: {
     loadedMeetups(state) {

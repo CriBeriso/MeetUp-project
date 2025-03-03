@@ -13,7 +13,7 @@
             </v-col>
             <v-col cols="7" sm="8" md="9">
               <v-card-title class="white--text">{{meetup.title}}</v-card-title>
-              <v-card-subtitle>{{$filters.dateFormat(meetup.date) }}</v-card-subtitle>
+              <v-card-subtitle>{{formatDate(meetup.date) }}</v-card-subtitle>
               <v-card-actions>
                 <v-btn variant="flat" color="secondary" :to="'/meetups/' + meetup.id">
                   <v-icon start>mdi-arrow-right-circle</v-icon>
@@ -33,6 +33,16 @@ export default {
   computed: {
     meetups() {
       return this.$store.getters.loadedMeetups
+    }
+  },
+  methods: {
+    formatDate(value) {
+      console.log(value)
+      const date = new Date(value)
+      return date.toLocaleString(['es-ES'], {
+        month: 'short', day: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      })
     }
   }
 }

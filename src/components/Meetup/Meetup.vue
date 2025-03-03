@@ -10,7 +10,7 @@
               :src="meetup.imageUrl"
               height="400px"
           ></v-img>
-          <v-card-subtitle>{{$filters.dateFormat(meetup.date)}} - {{meetup.location}}</v-card-subtitle>
+          <v-card-subtitle>{{formatDate(meetup.date)}} - {{meetup.location}}</v-card-subtitle>
           <v-card-text>{{meetup.description}}
           </v-card-text>
           <v-card-actions>
@@ -29,6 +29,15 @@ export default {
   computed: {
     meetup () {
       return this.$store.getters.loadedMeetup(this.id)
+    }
+  },
+  methods: {
+    formatDate(value) {
+      const date = new Date(value)
+      return date.toLocaleString(['es-ES'], {
+        month: 'short', day: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      })
     }
   }
 }
