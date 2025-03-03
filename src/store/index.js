@@ -1,5 +1,5 @@
 import {createStore} from 'vuex'
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 const store = createStore({
   state: {
@@ -20,11 +20,11 @@ const store = createStore({
         location: 'Paris',
         description: 'It\'s Paris!'
       }
-    ],
-    user: {
-      id: 'abcd',
-      registeredMeetups: ['PR1']
-    }
+    ]
+    // user: {
+    //   id: 'abcd',
+    //   registeredMeetups: ['PR1']
+    // }
   },
   mutations: {
     createMeetup (state, payload) {
@@ -63,7 +63,24 @@ const store = createStore({
             console.log(error)
           }
         )
-    } 
+    },
+    signUserIn ({commit}, payload) {
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, payload.email, payload.password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        const newUser = {
+          id: user.uid,
+          registeredMeetups: [],
+        };
+          commit('setUser', newUser)
+      })
+      .catch(
+        error => {
+          console.log(error)
+        }
+      )
+    }
   },
   getters: {
     loadedMeetups(state) {
@@ -80,6 +97,9 @@ const store = createStore({
           return meetup.id === meetupId
         })
       }
+    },
+    user (state) {
+      return state.user
     }
   }
 });
