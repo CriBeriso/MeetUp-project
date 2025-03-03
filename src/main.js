@@ -26,11 +26,14 @@ if (!firebaseConfig.apiKey) {
   initializeApp(firebaseConfig);
 }
 
+
 const app = createApp(App)
 
 app.use(router).use(store).use('app-alert', AlertCmp)
 
 registerPlugins(app)
+
+store.dispatch('loadMeetups')
 
 app.mount('#app')
 

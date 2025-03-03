@@ -1,5 +1,6 @@
 import {createStore} from 'vuex'
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth';
+import { getDatabase, ref, push, get } from 'firebase/database';
 
 const store = createStore({
   state: {
@@ -26,6 +27,9 @@ const store = createStore({
     error: null
   },
   mutations: {
+    setLoadedMeetups(state, payload) {
+      state.loadedMeetups = payload
+    },
     createMeetup (state, payload) {
       state.loadedMeetups.push(payload)
     },
@@ -43,20 +47,58 @@ const store = createStore({
     }
   },
   actions: {
+    loadMeetups ({commit}) {
+      commit('setLoading', true)
+      const db = getDatabase();
+      const meetupRef = ref(db, "meetups")
+      get(meetupRef)
+        .then((data) => {
+          const meetups = []
+          const obj = data.val()
+          for(let key in obj) {
+            meetups.push({
+              id: key,
+              title: obj[key].title,
+              description: obj[key].description,
+              imageUrl: obj[key].imageUrl,
+              date: obj[key].date
+            })
+          }
+          commit('setLoadedMeetups', meetups)
+          commit('setLoading', false)
+        })
+        .catch(
+          (error) => {
+            console.log(error)
+          }
+        )
+    },
     createMeetup ({commit}, payload) {
       const meetup = {
         title: payload.title,
         location: payload.location,
         imageUrl: payload.imageUrl,
         description: payload.description,
-        date: payload.date,
-        id: 'abcdefg'
+        date: payload.date.toISOString()
       }
-      commit('createMeetup', meetup)
+      const db = getDatabase();
+      const meetupRef = ref(db, "meetups")
+      push(meetupRef, meetup)
+        .then((data) => {
+          const key = data.key
+          commit('createMeetup', {
+            ...meetup,
+            id: key
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
     signUserUp ({commit}, payload) {
       commit('setLoading', true)
       commit('clearError')
+
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, payload.email, payload.password)
         .then((userCredential) => {

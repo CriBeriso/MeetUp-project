@@ -9,6 +9,16 @@
       </v-col>
     </v-row>
     <v-row>
+      <v-col cols="12" class="text-xs-center text-sm-center">
+        <v-progress-circular 
+        indeterminate 
+        color="primary" 
+        :width="7" 
+        :size="70" 
+        v-if="loading"></v-progress-circular>
+      </v-col>
+    </v-row>
+    <v-row v-if="!loading">
       <v-col cols="12" sm="6" >
         <v-carousel class="carrousel">
           <v-img 
@@ -35,6 +45,9 @@ export default {
   computed: {
     meetups () {
       return this.$store.getters.featuredMeetups
+    },
+    loading() {
+      return this.$store.getters.loading
     }
   },
   methods: {
