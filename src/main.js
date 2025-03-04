@@ -10,6 +10,7 @@ import store from './store'
 import router from './router'
 import App from './App.vue'
 import AlertCmp from '@/components/Shared/Alert.vue'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -26,6 +27,11 @@ if (!firebaseConfig.apiKey) {
   initializeApp(firebaseConfig);
 }
 
+getAuth().onAuthStateChanged((user) => {
+  if(user) {
+    store.dispatch('autoSignIn', user)
+  }
+})
 
 const app = createApp(App)
 

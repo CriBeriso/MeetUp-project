@@ -5,6 +5,7 @@ import Profile from '@/components/User/Profile'
 import SignIn from '@/components/User/SignIn'
 import SignUp from '@/components/User/SignUp'
 import Meetup from '@/components/Meetup/Meetup'
+import authGuard from './auth-guard'
 
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
@@ -15,8 +16,8 @@ const routes = [
   {path: '/', name: 'Home', component: Home},
   {path: '/meetups', name: 'Meetups', component: Meetups},
   {path:'/meetups/:id', name: 'Meetup', props: true, component: Meetup},
-  {path: '/meetup/new', name: 'CreateMeetup', component: CreateMeetup},
-  {path: '/profile', name: 'Profile', component: Profile},
+  {path: '/meetup/new', name: 'CreateMeetup', component: CreateMeetup, beforeEnter: authGuard},
+  {path: '/profile', name: 'Profile', component: Profile, beforeEnter: authGuard},
   {path: '/signup', name: 'Signup', component: SignUp},
   {path: '/signin', name: 'Signin', component: SignIn}
 ]

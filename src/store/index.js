@@ -1,5 +1,5 @@
 import {createStore} from 'vuex'
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
 import { getDatabase, ref, push, get } from 'firebase/database';
 
 const store = createStore({
@@ -61,7 +61,8 @@ const store = createStore({
               title: obj[key].title,
               description: obj[key].description,
               imageUrl: obj[key].imageUrl,
-              date: obj[key].date
+              date: obj[key].date,
+              creatorId: obj[key].creatorId
             })
           }
           commit('setLoadedMeetups', meetups)
@@ -73,13 +74,14 @@ const store = createStore({
           }
         )
     },
-    createMeetup ({commit}, payload) {
+    createMeetup ({commit, getters}, payload) {
       const meetup = {
         title: payload.title,
         location: payload.location,
         imageUrl: payload.imageUrl,
         description: payload.description,
-        date: payload.date.toISOString()
+        date: payload.date.toISOString(),
+        creatorId: getters.user.id
       }
       const db = getDatabase();
       const meetupRef = ref(db, "meetups")
@@ -139,6 +141,13 @@ const store = createStore({
           console.log(error)
         }
       )
+    },
+    autoSignIn ({commit}, payload) {
+      commit ('setUser', {id: payload.id, registeredMeetups: []})
+    },
+    logout({commit}) {
+      getAuth().signOut()
+      commit('setUser', null)
     },
     clearError ({commit}) {
       commit('clearError')
