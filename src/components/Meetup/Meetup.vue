@@ -26,6 +26,17 @@
             >{{ formatDate(meetup.date) }} -
             {{ meetup.location }}</v-card-subtitle
           >
+          <v-spacer></v-spacer>
+          <div>
+            <EditMeetupDateDialog
+              :meetup="meetup"
+              v-if="userIsCreator"
+            ></EditMeetupDateDialog>
+            <EditMeetupTimeDialog
+              :meetup="meetup"
+              v-if="userIsCreator"
+            ></EditMeetupTimeDialog>
+          </div>
           <v-card-text>{{ meetup.description }} </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -38,11 +49,17 @@
 </template>
 
 <script>
+import EditMeetupDateDialog from "./Edit/EditMeetupDateDialog.vue";
 import EditMeetupDetailsDialog from "./Edit/EditMeetupDetailsDialog.vue";
+import EditMeetupTimeDialog from "./Edit/EditMeetupTimeDialog.vue";
 
 export default {
   props: ["id"],
-  components: { EditMeetupDetailsDialog },
+  components: {
+    EditMeetupDetailsDialog,
+    EditMeetupDateDialog,
+    EditMeetupTimeDialog,
+  },
   computed: {
     meetup() {
       return this.$store.getters.loadedMeetup(this.id);
