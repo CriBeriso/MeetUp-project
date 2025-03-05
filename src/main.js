@@ -11,6 +11,7 @@ import router from './router'
 import App from './App.vue'
 import AlertCmp from '@/components/Shared/Alert.vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import EditMeetupDetailsDialog from  '@/components/Meetup/Edit/EditMeetupDetailsDialog.vue'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -35,7 +36,7 @@ getAuth().onAuthStateChanged((user) => {
 
 const app = createApp(App)
 
-app.use(router).use(store).use('app-alert', AlertCmp)
+app.use(router).use(store).use('app-alert', AlertCmp).use('app-edit-meetup-details-dialog', EditMeetupDetailsDialog)
 
 registerPlugins(app)
 

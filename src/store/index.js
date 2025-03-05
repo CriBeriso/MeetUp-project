@@ -1,6 +1,7 @@
 import {createStore} from 'vuex'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
-import { getDatabase, ref, push, get } from 'firebase/database';
+import { getDatabase, ref, push, get, update } from 'firebase/database';
+import { parseQuery } from 'vue-router';
 
 const store = createStore({
   state: {
@@ -33,6 +34,20 @@ const store = createStore({
     createMeetup (state, payload) {
       state.loadedMeetups.push(payload)
     },
+    updateMeetupData(state, payload) {
+      const meetup = state.loadedMeetups.find(meetup => {
+        return meetup.id === payload.id
+      })
+      if (payload.title) {
+        meetup.title = payload.title
+      }
+      if (payload.description) {
+        meetup.description = payload.description
+      }
+      if (payload.date) {
+        meetup.date = payload.date
+      }
+    },
     setUser (state, payload) {
       state.user = payload
     },
@@ -62,6 +77,7 @@ const store = createStore({
               description: obj[key].description,
               imageUrl: obj[key].imageUrl,
               date: obj[key].date,
+              location: obj[key].location,
               creatorId: obj[key].creatorId
             })
           }
@@ -96,6 +112,32 @@ const store = createStore({
         .catch((error) => {
           console.log(error)
         })
+    },
+    updateMeetupData({ commit }, payload) {
+      commit('setLoading', true)
+      const updateObj = {}
+      if (payload.title) {
+        updateObj.title = payload.title
+      }
+      if (payload.description) {
+        updateObj.description = payload.description
+      }
+      if (payload.date) {
+        updateObj.date = payload.date
+      }
+      const db = getDatabase();
+      const meetupRef = ref(db, 'meetups/' + payload.id)
+      update(meetupRef, updateObj)
+        .then(() => {
+          commit('setLoading', false)
+          commit('updateMeetupData', payload)
+        })
+        .catch(error => {
+          console.log(error)
+          commit('setLoading', false)
+        })
+
+
     },
     signUserUp ({commit}, payload) {
       commit('setLoading', true)
