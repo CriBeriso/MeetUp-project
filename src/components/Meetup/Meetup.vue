@@ -40,7 +40,7 @@
           <v-card-text>{{ meetup.description }} </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn variant="flat" color="primary">Register</v-btn>
+            <RegisterDialog :meetupId="meetup.id"></RegisterDialog>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -52,6 +52,7 @@
 import EditMeetupDateDialog from "./Edit/EditMeetupDateDialog.vue";
 import EditMeetupDetailsDialog from "./Edit/EditMeetupDetailsDialog.vue";
 import EditMeetupTimeDialog from "./Edit/EditMeetupTimeDialog.vue";
+import RegisterDialog from "./Registration/RegisterDialog.vue";
 
 export default {
   props: ["id"],
@@ -59,6 +60,7 @@ export default {
     EditMeetupDetailsDialog,
     EditMeetupDateDialog,
     EditMeetupTimeDialog,
+    RegisterDialog,
   },
   computed: {
     meetup() {

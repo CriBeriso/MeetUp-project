@@ -1,6 +1,6 @@
 import {createStore} from 'vuex'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
-import { getDatabase, ref, push, get, update } from 'firebase/database';
+import { getDatabase, ref, push, get, update, remove} from 'firebase/database';
 import { parseQuery } from 'vue-router';
 
 const store = createStore({
@@ -28,6 +28,21 @@ const store = createStore({
     error: null
   },
   mutations: {
+    registerUserForMeetup(state, payload) {
+      const id = payload.id
+      if (state.user.registeredMeetups.findIndex(meetup => meetup.id === id) >= 0) {
+        return 
+      }
+      state.user.registeredMeetups.push(id)
+      state.user.fbKeys[id] = payload.fbKey
+    },
+    unregisterUserFromMeetup(state, payload) {
+      const registeredMeetups = state.user.registeredMeetups
+      registeredMeetups.splice(registeredMeetups.findIndex(meetup => meetup.id === payload), 1)
+      if (state.user.fbKeys && state.user.fbKeys[payload]) {
+        delete state.user.fbKeys[payload]
+      }
+    },
     setLoadedMeetups(state, payload) {
       state.loadedMeetups = payload
     },
@@ -62,6 +77,59 @@ const store = createStore({
     }
   },
   actions: {
+    registerUserForMeetup({ commit, getters }, payload) {
+      commit('setLoading', true)
+      const db = getDatabase()
+      const user = getters.user
+
+      if (!user) {
+        console.error("No user found");
+        commit('setLoading', false);
+        return;
+      }
+
+      const userRef = ref(db, `/users/${user.id}/registrations/`)
+        
+      push(userRef, payload)
+        .then((data) => {
+          commit('setLoading', false)
+          commit('registerUserForMeetup', {id: payload, fbKey: data.key})
+        })
+        .catch(error => {
+          console.log(error)
+          commit('setLoading', false)
+        })
+
+    },
+    unregisterUserFromMeetup({ commit, getters }, payload) {
+      commit('setLoading', true)
+      const db = getDatabase()
+      const user = getters.user
+
+      if (!user || !user.fbKeys) {
+      console.error("No user or fbKeys found");
+      commit('setLoading', false);
+      return;
+      }
+
+      const fbKey = user.fbKeys[payload]
+      if (!fbKey) {
+        console.error("No fbKey found for this meetup");
+        commit('setLoading', false);
+        return;
+      }
+      const userRef = ref(db, `/users/${user.id}/registrations/${fbKey}`)
+      remove(userRef)
+        .then(() => {
+          commit('setLoading', false)
+          commit('unregisterUserFromMeetup', payload)
+        })
+        .catch(error => {
+          console.log(error)
+          commit('setLoading', false)
+        })
+
+    },
     loadMeetups ({commit}) {
       commit('setLoading', true)
       const db = getDatabase();
@@ -151,6 +219,7 @@ const store = createStore({
           const newUser = {
             id: user.uid,
             registeredMeetups: [],
+            fbKeys: {}
           };
             commit('setUser', newUser)
         })
@@ -173,6 +242,7 @@ const store = createStore({
         const newUser = {
           id: user.uid,
           registeredMeetups: [],
+          fbKeys: {}
         };
           commit('setUser', newUser)
       })
@@ -185,7 +255,11 @@ const store = createStore({
       )
     },
     autoSignIn ({commit}, payload) {
-      commit ('setUser', {id: payload.id, registeredMeetups: []})
+      commit('setUser', {
+        id: payload.id,
+        registeredMeetups: [],
+        fbKeys: {}
+      })
     },
     logout({commit}) {
       getAuth().signOut()

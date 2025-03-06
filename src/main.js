@@ -14,6 +14,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import EditMeetupDetailsDialog from '@/components/Meetup/Edit/EditMeetupDetailsDialog.vue'
 import EditMeetupDateDialog from '@/components/Meetup/Edit/EditMeetupDateDialog.vue'
 import EditMeetupTimeDialog from '@/components/Meetup/Edit/EditMeetupTimeDialog.vue'
+import RegisterDialog from '@/components/Meetup/Registration/RegisterDialog.vue'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -38,7 +39,7 @@ getAuth().onAuthStateChanged((user) => {
 
 const app = createApp(App)
 
-app.use(router).use(store).use('app-alert', AlertCmp).use('app-edit-meetup-details-dialog', EditMeetupDetailsDialog).use('app-edit-meetup-date-dialog', EditMeetupDateDialog).use('app-edit-meetup-time-dialog', EditMeetupTimeDialog)
+app.use(router).use(store).use('app-alert', AlertCmp).use('app-edit-meetup-details-dialog', EditMeetupDetailsDialog).use('app-edit-meetup-date-dialog', EditMeetupDateDialog).use('app-edit-meetup-time-dialog', EditMeetupTimeDialog).use('app-meetup-register-dialog', RegisterDialog)
 
 registerPlugins(app)
 
