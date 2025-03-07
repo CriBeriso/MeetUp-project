@@ -40,7 +40,10 @@
           <v-card-text>{{ meetup.description }} </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <RegisterDialog :meetupId="meetup.id"></RegisterDialog>
+            <RegisterDialog
+              :meetupId="meetup.id"
+              v-if="userIsAuthenticated && !userIsCreator"
+            ></RegisterDialog>
           </v-card-actions>
         </v-card>
       </v-col>

@@ -34,12 +34,18 @@ if (!firebaseConfig.apiKey) {
 getAuth().onAuthStateChanged((user) => {
   if(user) {
     store.dispatch('autoSignIn', user)
+    store.dispatch('fetchUserData')
   }
 })
 
 const app = createApp(App)
 
-app.use(router).use(store).use('app-alert', AlertCmp).use('app-edit-meetup-details-dialog', EditMeetupDetailsDialog).use('app-edit-meetup-date-dialog', EditMeetupDateDialog).use('app-edit-meetup-time-dialog', EditMeetupTimeDialog).use('app-meetup-register-dialog', RegisterDialog)
+app.use(router).use(store)
+app.component('app-alert', AlertCmp)
+app.component('app-edit-meetup-details-dialog', EditMeetupDetailsDialog)
+app.component('app-edit-meetup-date-dialog', EditMeetupDateDialog)
+app.component('app-edit-meetup-time-dialog', EditMeetupTimeDialog)
+app.component('app-meetup-register-dialog', RegisterDialog)
 
 registerPlugins(app)
 
